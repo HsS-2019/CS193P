@@ -107,11 +107,21 @@ override func viewDidDisappear(_ animated: Bool){
 
 #### didReceiveMemoryWarnning
 
-当手机内存压力过大时，会调用屏幕上的视图控制器的`didReceiveMemoryWarning()`方法。
+> 由于手机不像电脑一样采用页置换的方式获取请求内存，因此只能通过移除应用程序中的强引用来释放内存资源。
+
+当收到来自iOS系统的内存不足的警告消息，当前的视图控制器会调用`didReceiveMemoryWarning()`方法，并释放一些当前不在屏幕上显示的对象引用。我们也可以重写该方法并手动释放部分当前不需要的内存，以缓解内存压力。
 
 ```swift
+override func didReceiveMemoryWarning(){
+	super.didReceiveMemoryWarning()
+  //stop pointing to any large-memory things(i.e. let them form my heap)
+  //that I am not currently using(e.g. displaying on screen or processing somehow)
+  //and that I can recreate as needed(by refetching from network, for example)
+}
 
 ```
+
+当手机内存不足时，iOS系统会发出内存警告，并将该消息警告分发给所有正在运行中的应用程序，我们可以在应用程序代理的`applicationDidReceiveMemoryWarning()`方法以及视图控制器的``didReceiveMemoryWarning()`方法手动完成对象内存的释放，以防止应用程序被系统直接终止。
 
 ### 扩展接口
 
@@ -119,7 +129,16 @@ override func viewDidDisappear(_ animated: Bool){
 
 #### viewWillTransition
 
-屏幕即将发生旋转时调用，在这里我们可以对视图进行重新布局。
+屏幕即将发生旋转时调用，在这里我们可以对视图进行重新布局，并做一些对应的事情。
+
+```swift
+override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator){
+	super.viewWillTransition(to size, with coordinator)
+	//judge direction and do something
+}
+```
+
+另外，对于屏幕旋转，视图控制器提供了动画，节省了开发者的很多工作量。但如果你想实现一些特殊的效果，也可以在`coordinator`的方法中提供自定义的`animation block`，这样自定义的动画将和系统的动画在旋转的过程中一起执行。
 
 
 
