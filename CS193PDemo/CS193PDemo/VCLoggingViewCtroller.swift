@@ -49,29 +49,36 @@ class VCLoggingViewCtroller: UIViewController {
         print("\(VCLoggingViewCtroller.logPrefix(for: vclLoggingName))(\(instanceCount!)) \(msg)")
     }
     
+    //MARK: - Life Cycle
+    
+    ///从storyboard或Nib加载
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         logVCL("init?(coder:) - create via InterfaceBuilder ")
     }
     
+    ///从代码加载
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         logVCL("init(nibName:bundle:) - create in code")
     }
     
-    deinit {
-        logVCL("left the heap")
+    ///加载完成后
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        logVCL("awakeFromNib()")
     }
     
-    override func awakeFromNib() {
-        logVCL("awakeFromNib()")
+    override func loadView() {
+        
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         logVCL("viewDidLoad()")
     }
     
@@ -97,6 +104,10 @@ class VCLoggingViewCtroller: UIViewController {
         super.viewDidDisappear(animated)
         
         logVCL("viewDidDisappear(animate = \(animated)")
+    }
+    
+    deinit {
+        logVCL("left the heap")
     }
     
     override func didReceiveMemoryWarning() {
