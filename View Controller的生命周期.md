@@ -1,6 +1,6 @@
 # View Controller从创建到消亡
 
-> 前言：很多东西都想写，之前很忙的时候还在想我怎么就没有四只手。会继续学习新的，然后也会整理旧的，写的博客就从整理开始好了，在整理的过程中完善已有的，不断补充和添加新的。
+> 前言：很多东西都想写，之前很忙的时候还在想我怎么就没有四只手，l说她要八只手，可惜我们都没有。会继续学习新的，然后也会整理旧的。写的博客就从整理开始好了，在整理的过程中完善已有的，并不断补充和添加新的内容。
 
 `View Controller`，是管理UIKit 应用程序的视图层次结构的对象，一个`View Controller`主要负责的事情有：
 
@@ -49,7 +49,7 @@
 
 #### init(coder:)
 
-当你从storyboard实例化视图控制器时，UIKit使用当前方法创建对象。
+当从storyboard实例化视图控制器时，UIKit使用当前方法创建对象。**注意，不要在这里做`view`相关操作，`view`在`loadView()`方法中才初始化。**
 
 ```swift
 required init?(coder aDecoder: NSCoder) {
@@ -60,9 +60,20 @@ required init?(coder aDecoder: NSCoder) {
 
 如果你的视图控制器需要**自定义初始化**，而coder无法提供这种初始化时，可以通过UIStoryboard的`instanateinitialviewcontroller(creator:)`方法以编程方式实例化视图控制器。
 
+#### initWithNibName
+
+```swift
+override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+		//
+}
+```
+
+
+
 #### awakeFromNib
 
-严格来说`awakeFromNib`并不算是视图控制器生命周期的一部分，但对于`stroyboard`中创建的所有视图和视图控制器，都会在很早的时候调用`awakeFromNib`方法，在初始化之后，但在设置`outlet`和被作为`Segue`的一部分准备之前。
+严格来说`awakeFromNib()`方法并不算是视图控制器生命周期的一部分，但对于**`stroyboard`中创建的**所有视图和视图控制器，都会在很早的时候调用`awakeFromNib`方法。在初始化之后，但在设置`outlet`和被作为`Segue`的一部分准备之前。
 
 ```
 override func awakeFromNib(){
@@ -73,6 +84,18 @@ override func awakeFromNib(){
 ```
 
 这个方法主要是为需要在视图生命周期非常早的阶段执行的代码提供环境，但如果有可能，我们通常不会在在这里执行自定义的操作，建议尽量使用视图生命周期中的其它方法。
+
+#### loadView
+
+当视图控制器的`view`属性被访问，而`view`属性值为`nil`时，视图控制器自动调用这个方法，创建或加载视图并赋值给`view`属性。如果你是通过 `Interface Builder`（如`storyboard`）创建或实例化视图控制器，你并不需要重写这个方法。
+
+重写这一方法的目的主要是手动创建视图控制器的视图，如果你想做更多的初始化，请把这些工作放到`viewDidload()`方法中执行。
+
+```swift
+override func loadView(){
+	//Your custom implementation of this method should not call super
+}
+```
 
 #### viewDidLoad()
 
@@ -235,6 +258,15 @@ override func didReceiveMemoryWarning(){
 ```
 
 当手机内存不足时，iOS系统会发出内存警告，并将该消息警告分发给所有正在运行中的应用程序，我们可以在应用程序代理的`applicationDidReceiveMemoryWarning()`方法以及视图控制器的``didReceiveMemoryWarning()`方法手动完成对象内存的释放，以防止应用程序被系统直接终止。
+
+## 一些问题
+
+* 视图和应用程序的生命周期。可以引申到视图层次结构、响应链、App的启动优化分析。
+* 视图的渲染机制。不同机制之间的比较，自定义视图的封装，绘制过程的内存优化。
+* 不同的转场方式和转场动画。例如通过push和present都可以跳转到下一个界面，但是两者的区别是什么。
+* 怎么保证用户的体验。例如视图控制器进到屏幕后，怎么在开启耗时任务（发起请求和进行大量计算）的同时，确保用户的交互不受干扰。
+* 视图控制器之间如何进行通信。闭包、通知、代理模式、KVO。
+* 怎么添加适当的动画，让界面交互更人性化。动画的封装。
 
 
 

@@ -51,18 +51,22 @@ class VCLoggingViewCtroller: UIViewController {
     
     //MARK: - Life Cycle
     
-    ///从storyboard或Nib加载
+    ///从storyboard加载
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         logVCL("init?(coder:) - create via InterfaceBuilder ")
     }
     
-    ///从代码加载
+    ///通过Xib或其它非storyboard方式加载
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         logVCL("init(nibName:bundle:) - create in code")
+    }
+    
+    override func loadView() {
+        
     }
     
     ///加载完成后
@@ -70,10 +74,6 @@ class VCLoggingViewCtroller: UIViewController {
         super.awakeFromNib()
         
         logVCL("awakeFromNib()")
-    }
-    
-    override func loadView() {
-        
     }
 
     override func viewDidLoad() {
