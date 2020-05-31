@@ -62,6 +62,8 @@ required init?(coder aDecoder: NSCoder) {
 
 #### initWithNibName
 
+初始化`UIViewController`，执行关键数据初始化操作，通过`Nib`文件等方式（非`Storyboard`）创建`UIViewController`时都会调用这个方法。
+
 ```swift
 override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
     super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -69,7 +71,7 @@ override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 }
 ```
 
-
+如果使用`Storyboard`进行视图管理，方法`initWithNibName(:bundle)`不会被调用，但是`initWithCoder`会被调用。
 
 #### awakeFromNib
 
